@@ -43,14 +43,17 @@ const OptionsList = styled.ul`
 const OptionsListItem = styled.li<{ highlightedIndex: number, index: number, selectedItem: Fruit | null, item: Fruit }>`
   padding: .2em;
   background-color: ${props => props.highlightedIndex === props.index ? "#eeeeee" : "white"};
-  font-weight: ${props => props.selectedItem === props.item ? "bold" : "normal"};f
+  font-weight: ${props => props.selectedItem === props.item ? "bold" : "normal"};
+  color: ${props => props.item.value ? 'initial' : '#dddddd'}
+  transition: .2s all;
 `
+const GreyText = styled.span`color: #AAAAAA;`
 
 export default function FruitInput({ initialSelectedItem, onChange, label }: FruitInputProps) {
   return <Downshift
     initialSelectedItem={initialSelectedItem || undefined}
     onChange={onChange}
-    itemToString={item => (item ? item.value : "")}
+    itemToString={item => (item?.value || "")}
   >
     {({
       getInputProps,
@@ -71,12 +74,12 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
             <Input {...getInputProps()} />
           </InputWrapper>
           {isOpen
-            ? <OptionsList {...getMenuProps()}>
+            && <OptionsList {...getMenuProps()}>
               {(inputValue ? fuzzysort.go(inputValue, fruits, { key: FRUITS_SORT_KEY }).map(r => r.obj) : fruits)
                 .map((item, index) => (
                   <OptionsListItem
                     {...getItemProps({
-                      key: item.value,
+                      key: item?.value ||  'None',
                       index,
                       item,
                     })}
@@ -85,11 +88,11 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
                     index={index}
                     highlightedIndex={highlightedIndex}
                   >
-                    {item.value}
+                    {item.value || <GreyText>None</GreyText>}
                   </OptionsListItem>
                 ))
               }
-            </OptionsList> : null}
+            </OptionsList>}
         </Container>
       )}
   </Downshift>
