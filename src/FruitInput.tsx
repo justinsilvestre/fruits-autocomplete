@@ -64,14 +64,14 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
       inputValue,
       highlightedIndex,
       selectedItem,
-      getRootProps
+      getRootProps,
     }) => (
         <Container>
           <Label {...getLabelProps()}>{label}</Label>
           <InputWrapper
             {...getRootProps(undefined, { suppressRefError: true })}
           >
-            <Input {...getInputProps()} />
+            <Input {...getInputProps()} placeholder={highlightedIndex ? fruits[highlightedIndex]?.value : undefined} />
           </InputWrapper>
           {isOpen
             && <OptionsList {...getMenuProps()}>
