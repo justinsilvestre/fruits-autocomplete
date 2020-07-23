@@ -1,9 +1,16 @@
 import React, { useCallback, useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from 'styled-components'
 import FruitInput from './FruitInput';
-import { useSelect } from 'downshift';
 import { Fruit } from './fruits';
+
+const Form = styled.form`
+  max-width: 15rem;
+  margin: 5em auto;
+`
+const FruitImg = styled.img`
+  max-width: 100%;
+  height: auto;
+`
 
 function App() {
   const [fruit, setFruit] = useState<Fruit | null>(null)
@@ -15,12 +22,12 @@ function App() {
   const handleSubmitForm = useCallback((e) => { e.preventDefault() }, [])
 
   return (
-    <div className="App">
-      <form onSubmit={handleSubmitForm}>
+    <div>
+      <Form onSubmit={handleSubmitForm}>
         <FruitInput label="Favorite fruit" initialSelectedItem={fruit} onChange={handleChangeFruit} />
         <br />
-        {fruit ? `You selected "${fruit.value}".` : 'Please make a selection.'}
-      </form>
+        {fruit && <FruitImg src={`https://keywordimg.com/420x320/${fruit.value}`} />}
+      </Form>
     </div>
   );
 }
