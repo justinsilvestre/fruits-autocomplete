@@ -1,26 +1,29 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import FruitInput from './FruitInput';
+import { useSelect } from 'downshift';
+import { Fruit } from './fruits';
 
 function App() {
+  const [fruit, setFruit] = useState<Fruit | null>(null)
+  const handleChangeFruit = useCallback(
+    (selection: Fruit | null) =>
+      setFruit(selection)
+    , [])
+
+  const handleSubmitForm = useCallback((e) => { e.preventDefault() }, [])
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <form onSubmit={handleSubmitForm}>
+        <FruitInput label="Favorite fruit" initialSelectedItem={fruit} onChange={handleChangeFruit} />
+        <br />
+        {fruit ? `You selected "${fruit.value}".` : 'Please make a selection.'}
+      </form>
     </div>
   );
 }
 
 export default App;
+
