@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import Downshift, { DownshiftProps } from 'downshift';
-import fruits, { Fruit } from './fruits'
+import fuzzysort from 'fuzzysort'
+import fruits, { Fruit, FRUITS_SORT_KEY } from './fruits'
 
 type FruitInputProps = {
   initialSelectedItem: Fruit | null
@@ -35,8 +36,7 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
           </div>
           <ul {...getMenuProps()}>
             {isOpen
-              ? fruits
-                .filter(item => !inputValue || item.value.includes(inputValue))
+              ? (inputValue ? fuzzysort.go(inputValue, fruits, { key: FRUITS_SORT_KEY }).map(r => r.obj) : fruits)
                 .map((item, index) => (
                   <li
                     {...getItemProps({

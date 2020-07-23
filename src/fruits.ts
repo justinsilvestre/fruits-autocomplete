@@ -16,9 +16,13 @@ Strawberry, Surinam cherry, Tamarillo, Tamarind, Ugli fruit, White currant,
 White sapote, Yuzu, Avocado, Bell pepper, Chili pepper, Corn kernel,
 Cucumber, Eggplant, Olive, Pea, Pumpkin, Squash, Tomato, Zucchini`;
 
-const fruits: Fruit[] = text
-  .trim()
-  .split(/,\s*/)
+const fruits: Fruit[] = Array.from(
+  new Set(
+    text
+      .trim()
+      .split(/,\s*/),
+  ),
+)
   .map((value) => ({ value }));
 
 export default fruits;
@@ -26,3 +30,5 @@ export default fruits;
 export type Fruit = {
   value: string;
 };
+
+export const FRUITS_SORT_KEY = "value";
