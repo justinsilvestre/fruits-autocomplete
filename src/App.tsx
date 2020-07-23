@@ -11,8 +11,9 @@ const FruitImageWrapper = styled.div`
   max-width: 15rem;
   margin: 1em auto 2em;
 `
-const FruitImg = styled.img`
+const FruitImg = styled.img<{ sameAsPrevious: boolean }>`
   max-width: 100%;
+  opacity: ${props => props.sameAsPrevious ? '1' : '.2'};
 `
 
 const SubmitButton = styled.button`
@@ -40,7 +41,10 @@ function App() {
         <br />
         <SubmitButton>Submit</SubmitButton>
       </Form>
-      {submittedFruit?.value && <FruitImageWrapper><FruitImg src={`https://keywordimg.com/420x320/${submittedFruit.value}`} alt={submittedFruit.value} /></FruitImageWrapper>}
+      {submittedFruit?.value && <FruitImageWrapper key={submittedFruit.value}>
+        <FruitImg src={`https://keywordimg.com/420x320/${submittedFruit.value}`} alt={submittedFruit.value}
+          sameAsPrevious={submittedFruit.value === selectedFruit?.value} />
+      </FruitImageWrapper>}
     </div>
   );
 }

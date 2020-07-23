@@ -40,14 +40,15 @@ const OptionsList = styled.ul`
   overflow-y: auto;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, .3);
 `
-const OptionsListItem = styled.li<{ highlightedIndex: number, index: number, selectedItem: Fruit | null, item: Fruit }>`
+const OptionsListItem = styled.li<{ highlightedIndex: number, index: number, item: Fruit }>`
   padding: .2em;
   background-color: ${props => props.highlightedIndex === props.index ? "#eeeeee" : "white"};
-  font-weight: ${props => props.selectedItem === props.item ? "bold" : "normal"};
   color: ${props => props.item.value ? 'initial' : '#dddddd'}
   transition: .2s all;
 `
 const GreyText = styled.span`color: #AAAAAA;`
+
+const fuzzySortFormattedFruits = fruits.map((fruit) => ({ obj: fruit, indexes: [] as number[] })) as unknown as Fuzzysort.KeyResults<Fruit>
 
 export default function FruitInput({ initialSelectedItem, onChange, label }: FruitInputProps) {
   return <Downshift
@@ -75,20 +76,21 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
           </InputWrapper>
           {isOpen
             && <OptionsList {...getMenuProps()}>
-              {(inputValue ? fuzzysort.go(inputValue, fruits, { key: FRUITS_SORT_KEY }).map(r => r.obj) : fruits)
-                .map((item, index) => (
+              {(inputValue ? fuzzysort.go(inputValue, fruits, { key: FRUITS_SORT_KEY }) : fuzzySortFormattedFruits)
+                .map((result: { obj: Fruit, indexes: number[] }, index: number) => (
                   <OptionsListItem
                     {...getItemProps({
-                      key: item?.value ||  'None',
+                      key: result.obj?.value || 'None',
                       index,
-                      item,
+                      item: result.obj,
                     })}
                     selectedItem={selectedItem}
-                    item={item}
+                    item={result}
                     index={index}
                     highlightedIndex={highlightedIndex}
                   >
-                    {item.value || <GreyText>None</GreyText>}
+                    {result.obj.value ?
+                      <HighlightedMatches text={result.obj.value} highlightedIndexes={result.indexes} /> : <GreyText>None</GreyText>}
                   </OptionsListItem>
                 ))
               }
@@ -98,3 +100,18 @@ export default function FruitInput({ initialSelectedItem, onChange, label }: Fru
   </Downshift>
 }
 
+function HighlightedMatches({ text, highlightedIndexes }: { text: string, highlightedIndexes: number[] }) {
+  if (!highlightedIndexes.length) return <>{text}</>
+
+  const chars = []
+  for (const index of highlightedIndexes) {
+    const precedingExtraMatchText = text.slice(chars.length, index)
+    const matchText = <b key={index + text[index]}>{text[index]}</b>
+    chars.push(...precedingExtraMatchText)
+    chars.push(matchText)
+  }
+  if (chars.length !== text.length) {
+    chars.push(...text.slice(chars.length))
+  }
+  return <>{chars}</>
+}
